@@ -1,8 +1,19 @@
 from pydantic import BaseModel
-from datetime import date
 from typing import List
 from database import Base
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+
+
+class DeviceBase(BaseModel):
+    name: str
+    ip: str
+    category: str
+
+
+class UserBase(BaseModel):
+    name: str
+    email: str
+    info: str
 
 
 class Device(Base):
