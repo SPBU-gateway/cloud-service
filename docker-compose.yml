@@ -1,0 +1,27 @@
+version: '3.1'
+name: 'cloud-service'
+
+services:  
+  backend:
+      container_name: backend
+      build:
+        context: ./CloudService/
+      ports:
+        - 80:80
+      depends_on:
+        - db
+  
+  db:
+    container_name: db
+    image: postgres:16.1
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: "CyberImmunity"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "1234"
+    ports:
+      - 5432:5432
+
+volumes:
+  postgres_data:
