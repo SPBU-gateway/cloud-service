@@ -1,5 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException
 from typing import Annotated
+
+from fastapi.encoders import jsonable_encoder
+
 import models
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
@@ -43,7 +46,6 @@ async def device_by_name(
     :param name:
     :return: Device
     """
-    print('asd', name)
     result = db.query(models.Device).filter(models.Device.name == name).first()
     if not result:
         raise HTTPException(status_code=404, detail=f"Устройство не найдено: {name}")
@@ -56,6 +58,20 @@ async def add_device(device: models.DeviceBase, db: db_dependency):
     db.add(dev)
     db.commit()
     db.refresh(dev)
+
+
+@app.patch("/devices/{id}")
+async def device_by_id(id: int, db: db_dependency, device: models.DeviceBase):
+    stored_device = db.query(models.Device).filter(models.Device.id == id).first()
+    if stored_device is None:
+        raise HTTPException(status_code=404, detail=f"Устройство не найдено: {id}")
+    stored_device = models.DeviceBase(**jsonable_encoder(stored_device))
+    update_data = device.dict(exclude_unset=True)
+    updated_device = stored_device.copy(update=update_data)
+    db.query(models.Device).filter(models.Device.id == id).update(jsonable_encoder(updated_device))
+    db.commit()
+    result = db.query(models.Device).filter(models.Device.id == id).first()
+    return result
 
 
 @app.get("/all_devices")

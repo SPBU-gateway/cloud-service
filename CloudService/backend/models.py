@@ -5,9 +5,9 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 
 
 class DeviceBase(BaseModel):
-    name: str
-    ip: str
-    category: str
+    name: str | None = None
+    ip: str | None = None
+    category: str | None = None
 
 
 class UserBase(BaseModel):
