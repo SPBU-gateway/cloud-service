@@ -11,6 +11,11 @@ from typing import Dict
 # Consumer "подписыватся" на сообщения, содержащие какие то топики
 # Пусть пишем consumer для компоненты manager_input
 
+example_config = {
+    'bootstrap.servers': 'kafka-1:9192', # сервер кафки
+    'group.id': 'update_demo_manager',
+    'auto.offset.reset': 'earliest'  # начальная точка чтения (earliest or latest)
+}
 
 def handle_event(id: str, details: Dict):
     """
@@ -83,7 +88,7 @@ def consumer_job(args, config: Dict, topic: str):
         
 
 def start_consumer(args, config):
-    threading.Thread(target=lambda: consumer_job(args, config)).start()
+    threading.Thread(target=lambda: consumer_job(args, config, 'manager')).start()
 
 
 if __name__ == '__main__':
